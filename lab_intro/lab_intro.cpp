@@ -61,9 +61,14 @@ PNG grayscale(PNG image) {
  * @return The image with a spotlight.
  */
 PNG createSpotlight(PNG image, int centerX, int centerY) {
-
-  return image;
-  
+    for(size_t x = 0; x < image.width(); x++) {
+        for(size_t y = 0; y < image.height(); y++) {
+            double dist = sqrt((centerX - x) * (centerX - x) + (centerY - y) * (centerY - y));
+            double change = 1 - std::min(0.8, 0.005 * dist);
+            image.getPixel(x, y).l *= change;
+        }
+    }
+    return image;
 }
  
 
@@ -78,8 +83,7 @@ PNG createSpotlight(PNG image, int centerX, int centerY) {
  * @return The illinify'd image.
 **/
 PNG illinify(PNG image) {
-
-  return image;
+    return image;
 }
  
 
@@ -97,5 +101,5 @@ PNG illinify(PNG image) {
 */
 PNG watermark(PNG firstImage, PNG secondImage) {
 
-  return firstImage;
+    return firstImage;
 }
