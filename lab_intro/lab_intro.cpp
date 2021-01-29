@@ -83,6 +83,18 @@ PNG createSpotlight(PNG image, int centerX, int centerY) {
  * @return The illinify'd image.
 **/
 PNG illinify(PNG image) {
+    for(size_t x = 0; x < image.width(); x++) {
+        for(size_t y = 0; y < image.height(); y++) {
+            HSLAPixel& pixel = image.getPixel(x, y);
+            double blue_dist = abs(pixel.h - 216);
+            double orange_dist = abs(pixel.h - 11);
+            if(blue_dist > orange_dist) {
+                pixel.h = 11;
+            } else {
+                pixel.h = 216;
+            }
+        }
+    }
     return image;
 }
  
@@ -100,6 +112,12 @@ PNG illinify(PNG image) {
 * @return The watermarked image.
 */
 PNG watermark(PNG firstImage, PNG secondImage) {
-
+    for(size_t x = 0; x < std::min(firstImage.width(), secondImage.width()); x++) {
+        for(size_t y = 0; y < std::min(firstImage.height(), secondImage.height()); y++) {
+            if(secondImage.getPixel(x, y).l == 1.0) {
+                firstImage.getPixel(x, y).l = std::min(1.0 , firstImage.getPixel(x, y).l + 0.2);
+            }
+        }
+    }
     return firstImage;
 }
