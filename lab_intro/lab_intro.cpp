@@ -87,7 +87,12 @@ PNG illinify(PNG image) {
         for(size_t y = 0; y < image.height(); y++) {
             HSLAPixel& pixel = image.getPixel(x, y);
             double blue_dist = abs(pixel.h - 216);
-            double orange_dist = abs(pixel.h - 11);
+            double orange_dist;
+            if(pixel.h > 180) {
+                orange_dist = abs(pixel.h - 371);
+            } else {
+                orange_dist = abs(pixel.h - 11);
+            }
             if(blue_dist > orange_dist) {
                 pixel.h = 11;
             } else {
