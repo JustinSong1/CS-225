@@ -29,8 +29,7 @@ PNG* setupOutput(unsigned w, unsigned h) {
  * @return a pointer to the color to use when sketchifying
  */
 HSLAPixel* myFavoriteColor() {
-    HSLAPixel p(280, 0.8, 0.5);
-    return &p;
+    return new HSLAPixel(280, 0.8, 0.5);
 }
 
 void sketchify(std::string inputFile, std::string outputFile) {
@@ -67,7 +66,7 @@ void sketchify(std::string inputFile, std::string outputFile) {
     output->writeToFile(outputFile);
 
     // Clean up memory
-//    delete myPixel;
+    delete myPixel;
 //    delete output;
 //    delete original;
 }
