@@ -11,6 +11,7 @@ StickerSheet::~StickerSheet() {
         delete img;
     }
     images_.clear();
+    positions_.clear();
 }
 
 StickerSheet::StickerSheet(const StickerSheet &other) {
@@ -38,13 +39,16 @@ void StickerSheet::changeMaxStickers(unsigned int max) {
                 delete images_[i];
             }
         }
+    }
+    if(images_.size() > max) {
         images_.resize(max);
+        positions_.resize(max);
     }
     max_ = max;
 }
 
 Image* StickerSheet::getSticker(unsigned int index) {
-    if(index >= max_) {
+    if(index >= images_.size() || index < 0) {
         return NULL;
     } else {
         return images_[index];
@@ -56,6 +60,7 @@ const StickerSheet& StickerSheet::operator=(const StickerSheet &other) {
         delete img;
     }
     images_.clear();
+    positions_.clear();
     base_ = other.base_;
     max_ = other.max_;
     for(size_t i = 0; i < other.images_.size();i ++) {
@@ -66,21 +71,23 @@ const StickerSheet& StickerSheet::operator=(const StickerSheet &other) {
 }
 
 void StickerSheet::removeSticker(unsigned int index) {
-    if(index >= 0 && index < max_) {
+    if(index >= 0 && index < images_.size()) {
         delete images_[index];
         images_.erase(images_.begin() + index);
+        positions_.erase(positions_.begin() + index);
     }
 }
 
 Image StickerSheet::render() const {
-    unsigned maxX = 0;
-    unsigned maxY = 0;
+    unsigned maxX = base_.width();
+    unsigned maxY = base_.height();
     for(size_t i = 0; i < images_.size(); i++) {
         if(images_[i]->width() + positions_[i][0] > maxX) {
+            std::cout << "RESIZING X";
             maxX = images_[i]->width() + positions_[i][0];
         }
         if(images_[i]->height() + positions_[i][1] > maxY) {
-            maxX = images_[i]->height() + positions_[i][1];
+            maxY = images_[i]->height() + positions_[i][1];
         }
     }
     Image output = base_;
@@ -90,10 +97,10 @@ Image StickerSheet::render() const {
         for(size_t x = 0; x < img.width(); x++) {
             for(size_t y = 0; y < img.height(); y++) {
                 if(img.getPixel(x, y).a != 0) {
-                    output.getPixel(x, y).h = img.getPixel(x + positions_[i][0], y +  + positions_[i][1]).h;
-                    output.getPixel(x, y).s = img.getPixel(x + positions_[i][0], y +  + positions_[i][1]).s;
-                    output.getPixel(x, y).l = img.getPixel(x + positions_[i][0], y +  + positions_[i][1]).l;
-                    output.getPixel(x, y).a = img.getPixel(x + positions_[i][0], y +  + positions_[i][1]).a;
+                    output.getPixel(x + positions_[i][0], y +  + positions_[i][1]).h = img.getPixel(x, y).h;
+                    output.getPixel(x + positions_[i][0], y +  + positions_[i][1]).s = img.getPixel(x, y).s;
+                    output.getPixel(x + positions_[i][0], y +  + positions_[i][1]).l = img.getPixel(x, y).l;
+                    output.getPixel(x + positions_[i][0], y +  + positions_[i][1]).a = img.getPixel(x, y).a;
                 }
             }
         }
@@ -102,7 +109,7 @@ Image StickerSheet::render() const {
 }
 
 bool StickerSheet::translate(unsigned int index, unsigned int x, unsigned int y) {
-    if(index <= 0 || index >= images_.size()) {
+    if(index < 0 || index >= images_.size()) {
         return false;
     } else {
         positions_[index][0] = x;

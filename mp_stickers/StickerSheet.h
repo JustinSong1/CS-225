@@ -19,9 +19,10 @@ public:
     void removeSticker(unsigned index);
     Image* getSticker(unsigned index);
     Image render() const;
-private:
     std::vector<Image*> images_;
     std::vector<std::vector<unsigned>> positions_;
+private:
+
     Image base_;
     unsigned max_;
 };
