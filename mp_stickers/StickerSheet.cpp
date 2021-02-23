@@ -83,7 +83,6 @@ Image StickerSheet::render() const {
     unsigned maxY = base_.height();
     for(size_t i = 0; i < images_.size(); i++) {
         if(images_[i]->width() + positions_[i][0] > maxX) {
-            std::cout << "RESIZING X";
             maxX = images_[i]->width() + positions_[i][0];
         }
         if(images_[i]->height() + positions_[i][1] > maxY) {
