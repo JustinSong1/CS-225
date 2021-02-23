@@ -1,4 +1,5 @@
 #include "Image.h"
+#include <cmath>
 
 void Image::darken() {
     darken(0.1);
