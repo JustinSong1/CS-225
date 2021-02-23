@@ -62,7 +62,12 @@ void Image::lighten(double amount) {
 void Image::rotateColor(double degrees) {
     for (size_t x = 0; x < width(); x++) {
         for (size_t y = 0; y < height(); y++) {
-            getPixel(x, y).h = fmod((getPixel(x, y).h + degrees), 360.0);
+            int hue = fmod((getPixel(x, y).h + degrees), 360.0);
+            if(hue < 0) {
+                getPixel(x, y).h = hue + 360;
+            } else {
+                getPixel(x, y).h = hue;
+            }
         }
     }
 }
@@ -83,7 +88,7 @@ void Image::scale(double factor) {
     PNG newImage = PNG(width() * factor, height() * factor);
     for (size_t x = 0; x < newImage.width(); x++) {
         for (size_t y = 0; y < newImage.height(); y++) {
-            newImage.getPixel(x, y) = getPixel(x/factor, y/factor);
+            newImage.getPixel(x, y) = getPixel(x / factor, y / factor);
         }
     }
     resize(width() * factor, height() * factor);
@@ -95,12 +100,12 @@ void Image::scale(double factor) {
 }
 
 void Image::scale(unsigned int w, unsigned int h) {
-    double wFactor = static_cast<double>(w)/static_cast<double>(width());
-    double hFactor = static_cast<double>(h)/static_cast<double>(height());
+    double wFactor = static_cast<double>(w) / static_cast<double>(width());
+    double hFactor = static_cast<double>(h) / static_cast<double>(height());
     PNG newImage = PNG(w, h);
     for (size_t x = 0; x < newImage.width(); x++) {
         for (size_t y = 0; y < newImage.height(); y++) {
-            newImage.getPixel(x, y) = getPixel(x/wFactor, y/hFactor);
+            newImage.getPixel(x, y) = getPixel(x / wFactor, y / hFactor);
         }
     }
     resize(w, h);
