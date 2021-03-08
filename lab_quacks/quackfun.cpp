@@ -29,13 +29,14 @@ namespace QuackFun {
 template <typename T>
 T sum(stack<T>& s)
 {
-//    if(s.empty()) {
-//        return T();
-//    }
-//    T val = s.top();
-//    s.pop();
-//    val += sum(s);
-    return 0;
+    if(s.empty()) {
+        return T();
+    }
+    T val = s.top();
+    s.pop();
+    T ans = val + sum(s);
+    s.push(val);
+    return ans;
 }
 
 /**
@@ -57,17 +58,21 @@ T sum(stack<T>& s)
  */
 bool isBalanced(queue<char> input)
 {
-    size_t count = 0;
+    stack<char> open_brackets;
     while(!input.empty()) {
         char c = input.front();
         if(c == '[') {
-            count++;
+            open_brackets.push(c);
         } else if(c == ']') {
-            count--;
+            if(!open_brackets.empty()) {
+                open_brackets.pop();
+            } else {
+                return false;
+            }
         }
         input.pop();
     }
-    return count == 0;
+    return open_brackets.empty();
 }
 
 /**
