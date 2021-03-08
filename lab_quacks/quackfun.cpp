@@ -92,31 +92,32 @@ void scramble(queue<T>& q)
     size_t size = q.size();
     size_t curr_block = 1;
     bool in_bounds = true;
-    size_t index = 1;
+    size_t index = 0;
     while(in_bounds) {
         if(curr_block % 2 == 1) {
             for(size_t i = 0; i < curr_block; i++) {
-                T element = q.front();
-                q.pop();
-                q.push(element);
-                index++;
                 if(index == size) {
                     in_bounds = false;
                     break;
                 }
+                T element = q.front();
+                q.pop();
+                q.push(element);
+                index++;
+                
             }
         } else {
             for(size_t i = 0; i < curr_block; i++) {
-                T element = q.front();
-                q.pop();
-                s.push(element);
-                index++;
                 if(index == size) {
                     in_bounds = true;
                     break;
                 }
+                T element = q.front();
+                q.pop();
+                s.push(element);
+                index++;
             }
-            for(size_t i = 0; i < s.size(); i++) {
+            while(!s.empty()) {
                 T element = s.top();
                 s.pop();
                 q.push(element);
