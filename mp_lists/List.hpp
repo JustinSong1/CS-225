@@ -5,8 +5,8 @@
 
 template <class T>
 List<T>::List() { 
-    ListNode* head_ = NULL;
-    ListNode* tail_ = NULL;
+    head_ = nullptr;
+    tail_ = nullptr;
     length_ = 0;
 }
 
@@ -36,12 +36,12 @@ template <typename T>
 void List<T>::_destroy() {
   ListNode* curr = head_;
   ListNode* next;
-  while(curr != NULL) {
+  while(curr != nullptr) {
       next = curr->next;
       delete curr;
       curr = next;
   }
-  head_ = NULL;
+  head_ = nullptr;
 }
 
 /**
@@ -52,16 +52,20 @@ void List<T>::_destroy() {
  */
 template <typename T>
 void List<T>::insertFront(T const & ndata) {
+  std::cout << "HEAD: " << head_;
   /// @todo Graded in MP3.1
   ListNode * newNode = new ListNode(ndata);
   newNode -> next = head_;
-  newNode -> prev = NULL;
+  newNode -> prev = nullptr;
   
-  if (head_ != NULL) {
+  if (head_ != nullptr) {
     head_ -> prev = newNode;
     head_ = newNode;
+  } else {
+    head_ = newNode;
   }
-  if (tail_ == NULL) {
+
+  if (tail_ == nullptr) {
     tail_ = newNode;
   }
 
@@ -78,15 +82,18 @@ void List<T>::insertFront(T const & ndata) {
 template <typename T>
 void List<T>::insertBack(const T & ndata) {
     ListNode * newNode = new ListNode(ndata);
-    newNode -> next = NULL;
+    newNode -> next = nullptr;
     newNode -> prev = tail_;
 
-    if(head_ == NULL) {
-        head_ = newNode;
+    if(head_ == nullptr) {
+      head_ = newNode;
     }
-    if(tail_ != NULL) {
-        tail_ -> next = newNode;
-        tail_ = newNode;
+
+    if(tail_ != nullptr) {
+      tail_ -> next = newNode;
+      tail_ = newNode;
+    } else {
+      tail_ = newNode;
     }
     length_++;
 }
@@ -112,7 +119,7 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
   /// @todo Graded in MP3.1
   ListNode * curr = start;
 
-  for (int i = 0; i < splitPoint || curr != NULL; i++) {
+  for (int i = 0; i < splitPoint && curr != NULL; i++) {
     curr = curr->next;
   }
 
@@ -120,8 +127,9 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
       curr->prev->next = NULL;
       curr->prev = NULL;
   }
+  
 
-  return NULL;
+  return curr;
 }
 
 /**
