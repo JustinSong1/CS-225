@@ -82,14 +82,14 @@ void List<T>::insertFront(T const & ndata) {
 template <typename T>
 void List<T>::insertBack(const T & ndata) {
     ListNode * newNode = new ListNode(ndata);
-    newNode -> next = nullptr;
+    newNode -> next = NULL;
     newNode -> prev = tail_;
 
-    if(head_ == nullptr) {
+    if(head_ == NULL) {
       head_ = newNode;
     }
 
-    if(tail_ != nullptr) {
+    if(tail_ != NULL) {
       tail_ -> next = newNode;
       tail_ = newNode;
     } else {
@@ -189,7 +189,59 @@ void List<T>::reverse() {
  */
 template <typename T>
 void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
-  /// @todo Graded in MP3.2
+  if(startPoint == endPoint || startPoint == NULL) {
+    return;
+  }
+
+  bool updateHead = (startPoint == head_);
+  bool updateTail = (endPoint == tail_);
+
+  ListNode* previous = startPoint -> prev;
+  ListNode* nextNode = endPoint -> next;
+ 
+  ListNode* curr = startPoint;
+  ListNode* temp = NULL;
+  bool firstRun = true;
+  while(curr != endPoint) {
+    temp = curr->prev;
+    curr->prev = curr->next;
+    if(updateTail && firstRun) {
+      curr ->next = NULL;
+    } else {
+      curr->next = temp;
+    }
+    curr = curr->prev;
+    firstRun = false;
+  }
+  temp = curr->prev;
+  curr->prev = curr->next;
+  curr->next = temp;
+  curr = curr->prev;
+
+  if(temp != NULL && updateHead) {
+    head_ = temp->prev;
+  }
+  if(updateTail) {
+    ListNode* newTail = temp;
+    while(newTail->next != NULL) {
+      newTail = newTail->next;
+    }
+    tail_ = newTail;
+  }
+
+  endPoint->prev = previous;
+  if(endPoint->prev != NULL) {
+    endPoint->prev->next = endPoint;
+  }
+
+  startPoint->next = nextNode;
+  if(startPoint->next != NULL) {
+    startPoint->next->prev = startPoint;
+  }
+
+  temp=startPoint;
+  startPoint = endPoint;
+  endPoint = temp;
 }
 
 /**
@@ -200,7 +252,29 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
  */
 template <typename T>
 void List<T>::reverseNth(int n) {
-  /// @todo Graded in MP3.2
+  if(n == length_ || n==1) {
+    reverse();
+  }
+  if(n < 1) {
+    return;
+  }
+  ListNode* start = head_;
+  int times = length_/n;
+  for(int i = 0; i < times; i++) {
+    ListNode* end = start;
+    for(int j = 0; j < n-1; j++) {
+      end = end->next;
+    }
+    reverse(start, end);
+    start = end->next;
+  }
+  if(length_ % n != 0) {
+    reverse(start, tail_);
+  }
+  // ListNode* start = head_;
+  // ListNode* end = tail_->prev;
+  
+  // reverse(start, end);
 }
 
 
