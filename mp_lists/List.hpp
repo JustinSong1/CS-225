@@ -221,30 +221,27 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
   curr->next = temp;
   curr = curr->prev;
 
-  if(temp != NULL && updateHead) {
-    head_ = temp->prev;
-  }
-  if(updateTail) {
-    ListNode* newTail = temp;
-    while(newTail->next != NULL) {
-      newTail = newTail->next;
-    }
-    tail_ = newTail;
-  }
-
   tempEnd->prev = previous;
   if(previous != NULL) {
     previous->next = tempEnd;
   }
 
   tempStart->next = nextNode;
-  if(startPoint->next != NULL) {
+  if(nextNode != NULL) {
     nextNode->prev = tempStart;
   }
 
   temp=startPoint;
   startPoint = endPoint;
   endPoint = temp;
+
+  if(temp != NULL && updateHead) {
+    head_ = tempEnd;
+  }
+
+  if(updateTail) {
+    tail_ = tempStart;
+  }
 }
 
 /**
