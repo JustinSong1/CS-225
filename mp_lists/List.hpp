@@ -123,7 +123,7 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
     curr = curr->next;
   }
 
-  if (curr != NULL) {
+  if (curr != NULL && curr->prev != NULL) {
       curr->prev->next = NULL;
       curr->prev = NULL;
   }
@@ -366,6 +366,12 @@ typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) 
  */
 template <typename T>
 typename List<T>::ListNode* List<T>::mergesort(ListNode * start, int chainLength) {
-  /// @todo Graded in MP3.2
-  return NULL;
+  if(chainLength == 1) {
+    return start;
+  }
+  ListNode* right = split(start, chainLength/2);
+  ListNode* left = start;
+  right = mergesort(right, chainLength-chainLength/2);
+  start = mergesort(left, chainLength/2);
+  return merge(right, start);
 }
