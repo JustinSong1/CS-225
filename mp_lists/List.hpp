@@ -199,6 +199,9 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
   ListNode* previous = startPoint -> prev;
   ListNode* nextNode = endPoint -> next;
  
+  ListNode* tempStart = startPoint->next->prev;
+  ListNode* tempEnd = endPoint->prev->next;
+
   ListNode* curr = startPoint;
   ListNode* temp = NULL;
   bool firstRun = true;
@@ -229,14 +232,14 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
     tail_ = newTail;
   }
 
-  endPoint->prev = previous;
-  if(endPoint->prev != NULL) {
-    endPoint->prev->next = endPoint;
+  tempEnd->prev = previous;
+  if(previous != NULL) {
+    previous->next = tempEnd;
   }
 
-  startPoint->next = nextNode;
+  tempStart->next = nextNode;
   if(startPoint->next != NULL) {
-    startPoint->next->prev = startPoint;
+    nextNode->prev = tempStart;
   }
 
   temp=startPoint;
@@ -315,8 +318,42 @@ void List<T>::mergeWith(List<T> & otherList) {
  */
 template <typename T>
 typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) {
-  /// @todo Graded in MP3.2
-  return NULL;
+  if(first == NULL) {
+    return second;
+  }
+  if(second == NULL) {
+    return first;
+  }
+  ListNode* newHead;
+  if(first -> data < second -> data) {
+    newHead = first;
+    first = first->next;
+  } else {
+    newHead = second;
+    second = second->next;
+  }
+  ListNode* newTail = newHead;
+  while(first != NULL && second != NULL) {
+    ListNode* temp;
+    if(first -> data < second -> data) {
+      temp = first;
+      first = first->next;
+    } else {
+      temp = second;
+      second = second->next;
+    }
+    temp->prev = newTail;
+    newTail->next = temp;
+    newTail = temp;
+  }
+  if(first != NULL) {
+    first->prev = newTail;
+    newTail->next = first;
+  } else if(second != NULL) {
+    second->prev = newTail;
+    newTail->next = second;
+  }
+  return newHead;
 }
 
 /**
