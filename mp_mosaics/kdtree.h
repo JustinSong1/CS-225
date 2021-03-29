@@ -41,7 +41,6 @@ class KDTree
       KDTreeNode() : point(), left(NULL), right(NULL) {}
       KDTreeNode(const Point<Dim> &point) : point(point), left(NULL), right(NULL) {}
     };
-
   public:
     /**
      * Determines if Point a is smaller than Point b in a given dimension d.
@@ -256,9 +255,9 @@ class KDTree
     void printTree(KDTreeNode * subroot, std::vector<std::string>& output,
                    int left, int top, int width, int currd) const;
 
-    /**
-     * @todo Add your helper functions here.
-     */
+    KDTreeNode* buildTree(vector<Point<Dim>>& points, int start, int end, int currDim);
+    int partition(vector<Point<Dim>>& points, int start, int end, int currDim);
+    Point<Dim> quickSelect(vector<Point<Dim>>& points, int start, int end, int k, int currDim);
 };
 
 #include "kdtree.hpp"
