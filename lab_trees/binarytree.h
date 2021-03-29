@@ -158,6 +158,10 @@ class BinaryTree
          *  as examples.
          */
 
+         void mirror(Node* subRoot);
+
+         bool isOrderedRecursive(Node* curr, T min, T max) const;
+
         /**
          * Private helper function for the public height function.
          * @param subRoot The current node in the recursion
