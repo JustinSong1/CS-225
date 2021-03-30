@@ -56,6 +56,7 @@ KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
     vector<Point<Dim>> points;
     points.resize(size);
     if(size == 0) {
+        root = nullptr;
          return;
      }
      for(size_t i = 0; i < newPoints.size(); i++) {
@@ -105,15 +106,28 @@ int KDTree<Dim>::partition(vector<Point<Dim>> &points, int start, int end, int c
 
 template <int Dim>
 KDTree<Dim>::KDTree(const KDTree<Dim>& other) {
-  /**
-   * @todo Implement this function!
-   */
+    root = nullptr;
+    copyHelper(root, other.root);
+}
+
+template <int Dim>
+void KDTree<Dim>::copyHelper(KDTreeNode* &to, KDTreeNode* from) {
+    if(from == nullptr) {
+        to == nullptr;
+    }
+    to = new KDTreeNode();
+    to->point = from->point;
+    copyHeleper(to->left, from->left);
+    copyHeleper(to->right, from->right);
 }
 
 template <int Dim>
 const KDTree<Dim>& KDTree<Dim>::operator=(const KDTree<Dim>& rhs) {
-  root = rhs.root;
-  size = rhs.size;
+  if(this != rhs) {
+    this->destroy(root);
+    KDTree<Dim> temp(rhs);
+    std::swap(temp.root, root);
+  }
 
   return *this;
 }
@@ -124,7 +138,7 @@ KDTree<Dim>::~KDTree() {
 }
 
 template <int Dim>
-typename KDTree<Dim>::destroy(KDTree<Dim>::KDTreeNode* node) {
+void KDTree<Dim>::destroy(typename KDTree<Dim>::KDTreeNode* node) {
     if(node != nullptr) {
         destroy(node->left);
         destroy(node->right);

@@ -261,6 +261,7 @@ class KDTree
     KDTreeNode* nearestNeighborHelper(KDTreeNode* subRoot, const Point<Dim>& query, int depth) const;
     int distance(const Point<Dim>& p1, const Point<Dim>& p2) const;
     void destroy(KDTreeNode* node);
+    void copyHelper(KDTreeNode* &to, KDTreeNode* from);
 };
 
 #include "kdtree.hpp"
