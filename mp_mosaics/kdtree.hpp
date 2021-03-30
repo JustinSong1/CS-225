@@ -24,16 +24,21 @@ bool KDTree<Dim>::smallerDimVal(const Point<Dim>& first,
 }
 
 template <int Dim>
+int KDTree<Dim>::distance(const Point<Dim>& p1, const Point<Dim>& p2) const {
+    int dist = 0;
+    for(size_t i = 0; i < Dim; i++) {
+        dist += (p1[i] - p2[i])*(p1[i] - p2[i]);
+    }
+    return dist;
+}
+
+template <int Dim>
 bool KDTree<Dim>::shouldReplace(const Point<Dim>& target,
                                 const Point<Dim>& currentBest,
                                 const Point<Dim>& potential) const
 {
-     int potentialDistance = 0;
-     int currBestDistance = 0;
-     for(size_t i = 0; i < Dim; i++) {
-         potentialDistance += (target[i] - potential[i])*(target[i] - potential[i]);
-         currBestDistance += (target[i] - currentBest[i])*(target[i] - currentBest[i]);
-     }
+     int potentialDistance = distance(target, potential);
+     int currBestDistance = distance(target, currentBest);
 
      if(potentialDistance > currBestDistance) {
          return false;
@@ -124,10 +129,38 @@ KDTree<Dim>::~KDTree() {
 template <int Dim>
 Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
 {
-    /**
-     * @todo Implement this function!
-     */
+    return nearestNeighborHelper(root, query, 0)->point;
+}
 
-    return Point<Dim>();
+template<int Dim>
+typename KDTree<Dim>::KDTreeNode *KDTree<Dim>::nearestNeighborHelper(KDTree<Dim>::KDTreeNode* subRoot, const Point<Dim> &query, int depth) const {
+    if(subRoot == nullptr) {
+        return nullptr;
+    }
+    KDTree<Dim>::KDTreeNode* next;
+    KDTree<Dim>::KDTreeNode* other;
+    if(query[depth % Dim] < subRoot->point[depth % Dim] || (query[depth % Dim] == subRoot->point[depth % Dim] && query < subRoot->point)) {
+        next = subRoot->left;
+        other = subRoot->right;
+    } else {
+        next = subRoot->right;
+        other = subRoot->left;
+    }
+
+    KDTree<Dim>::KDTreeNode* temp = nearestNeighborHelper(next, query, depth + 1);
+    KDTree<Dim>::KDTreeNode* best;
+    if (shouldReplace(query, subRoot->point, temp->point)) {
+        best = temp;
+    } else {
+        best = subRoot;
+    }
+
+    if(distance(query, best->point) >= (query[depth % Dim] - subRoot->point[depth % Dim]) * (query[depth % Dim] - subRoot->point[depth % Dim])) {
+        temp = nearestNeighborHelper(other, query, depth+1);
+        if(shouldReplace(query, best->point, temp->point)) {
+            best = temp;
+        }
+    }
+    return best;
 }
 

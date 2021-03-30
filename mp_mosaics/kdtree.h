@@ -258,6 +258,8 @@ class KDTree
     KDTreeNode* buildTree(vector<Point<Dim>>& points, int start, int end, int currDim);
     int partition(vector<Point<Dim>>& points, int start, int end, int currDim);
     void quickSelect(vector<Point<Dim>>& points, int start, int end, int k, int currDim);
+    KDTreeNode* nearestNeighborHelper(KDTreeNode* subRoot, const Point<Dim>& query, int depth) const;
+    int distance(const Point<Dim>& p1, const Point<Dim>& p2) const;
 };
 
 #include "kdtree.hpp"
