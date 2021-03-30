@@ -106,7 +106,7 @@ int KDTree<Dim>::partition(vector<Point<Dim>> &points, int start, int end, int c
 
 template <int Dim>
 KDTree<Dim>::KDTree(const KDTree<Dim>& other) {
-    root = nullptr;
+    this->destroy(root);
     copyHelper(root, other.root);
 }
 
