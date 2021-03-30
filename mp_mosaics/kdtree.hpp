@@ -149,7 +149,7 @@ typename KDTree<Dim>::KDTreeNode *KDTree<Dim>::nearestNeighborHelper(KDTree<Dim>
 
     KDTree<Dim>::KDTreeNode* temp = nearestNeighborHelper(next, query, depth + 1);
     KDTree<Dim>::KDTreeNode* best;
-    if (shouldReplace(query, subRoot->point, temp->point)) {
+    if (temp != nullptr && shouldReplace(query, subRoot->point, temp->point)) {
         best = temp;
     } else {
         best = subRoot;
@@ -157,7 +157,7 @@ typename KDTree<Dim>::KDTreeNode *KDTree<Dim>::nearestNeighborHelper(KDTree<Dim>
 
     if(distance(query, best->point) >= (query[depth % Dim] - subRoot->point[depth % Dim]) * (query[depth % Dim] - subRoot->point[depth % Dim])) {
         temp = nearestNeighborHelper(other, query, depth+1);
-        if(shouldReplace(query, best->point, temp->point)) {
+        if(temp != nullptr && shouldReplace(query, best->point, temp->point)) {
             best = temp;
         }
     }
