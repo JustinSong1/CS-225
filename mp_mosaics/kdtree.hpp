@@ -112,18 +112,24 @@ KDTree<Dim>::KDTree(const KDTree<Dim>& other) {
 
 template <int Dim>
 const KDTree<Dim>& KDTree<Dim>::operator=(const KDTree<Dim>& rhs) {
-  /**
-   * @todo Implement this function!
-   */
+  root = rhs.root;
+  size = rhs.size;
 
   return *this;
 }
 
 template <int Dim>
 KDTree<Dim>::~KDTree() {
-  /**
-   * @todo Implement this function!
-   */
+  destroy(root);
+}
+
+template <int Dim>
+typename KDTree<Dim>::destroy(KDTree<Dim>::KDTreeNode* node) {
+    if(node != nullptr) {
+        destroy(node->left);
+        destroy(node->right);
+        delete node;
+    }
 }
 
 template <int Dim>
