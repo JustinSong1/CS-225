@@ -24,8 +24,8 @@ bool KDTree<Dim>::smallerDimVal(const Point<Dim>& first,
 }
 
 template <int Dim>
-int KDTree<Dim>::distance(const Point<Dim>& p1, const Point<Dim>& p2) const {
-    int dist = 0;
+float KDTree<Dim>::distance(const Point<Dim>& p1, const Point<Dim>& p2) const {
+    float dist = 0;
     for(size_t i = 0; i < Dim; i++) {
         dist += (p1[i] - p2[i])*(p1[i] - p2[i]);
     }

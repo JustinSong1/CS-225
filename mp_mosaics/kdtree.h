@@ -259,7 +259,7 @@ class KDTree
     int partition(vector<Point<Dim>>& points, int start, int end, int currDim);
     void quickSelect(vector<Point<Dim>>& points, int start, int end, int k, int currDim);
     KDTreeNode* nearestNeighborHelper(KDTreeNode* subRoot, const Point<Dim>& query, int depth) const;
-    int distance(const Point<Dim>& p1, const Point<Dim>& p2) const;
+    float distance(const Point<Dim>& p1, const Point<Dim>& p2) const;
     void destroy(KDTreeNode* node);
     void copyHelper(KDTreeNode* &to, KDTreeNode* from);
 };
