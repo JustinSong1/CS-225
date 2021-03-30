@@ -257,7 +257,7 @@ class KDTree
 
     KDTreeNode* buildTree(vector<Point<Dim>>& points, int start, int end, int currDim);
     int partition(vector<Point<Dim>>& points, int start, int end, int currDim);
-    Point<Dim> quickSelect(vector<Point<Dim>>& points, int start, int end, int k, int currDim);
+    void quickSelect(vector<Point<Dim>>& points, int start, int end, int k, int currDim);
 };
 
 #include "kdtree.hpp"

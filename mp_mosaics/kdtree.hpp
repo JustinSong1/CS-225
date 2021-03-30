@@ -20,7 +20,7 @@ bool KDTree<Dim>::smallerDimVal(const Point<Dim>& first,
     if(first[curDim] > second[curDim]) {
         return false;
     }
-    return first[curDim] < second[curDim];
+    return first < second;
 }
 
 template <int Dim>
@@ -61,39 +61,36 @@ KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
 
 template<int Dim>
 typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::buildTree(vector<Point<Dim>> &points, int start, int end, int currDim) {
-    if (start >= end) {
+    if (start > end) {
         return nullptr;
     }
-    int median = (start+end)/2;
-    Point<Dim> point = quickSelect(points, start, end, median, currDim);
-    KDTreeNode* n = new KDTreeNode(point);
+    int median = (start + end)/2;
+    quickSelect(points, start, end, median, currDim);
+    KDTreeNode* n = new KDTreeNode(points[median]);
     n->left = buildTree(points, start, median - 1, (currDim+1) % Dim);
-    n->right = buildTree(points,median + 1, end, (currDim+1) % Dim);
+    n->right = buildTree(points, median + 1, end, (currDim+1) % Dim);
     return n;
 }
 
 template <int Dim>
-Point<Dim> KDTree<Dim>::quickSelect(vector<Point<Dim>> &points, int start, int end, int k, int currDim) {
-    if (k > 0 && k <= end-start+1) {
-        int index = partition(points, start, end, currDim);
-        if (index - start == k - 1) {
-            return points[index];
-        } else if (index - start > k - 1) {
-            return quickSelect(points, start, index - start, k, currDim);
-        } else {
-            return quickSelect(points, index + 1, end, k - index + 1, currDim);
-        }
+void KDTree<Dim>::quickSelect(vector<Point<Dim>> &points, int start, int end, int k, int currDim) {
+    if(start>=end) return;
+    int index = partition(points, start, end, currDim);
+    if (index > k) {
+        return quickSelect(points, start, index - 1, k, currDim);
+    } 
+    if (index < k) {
+        return quickSelect(points, index + 1, end, k , currDim);
     }
-    return NULL;
 }
 
 template <int Dim>
 int KDTree<Dim>::partition(vector<Point<Dim>> &points, int start, int end, int currDim) {
     Point<Dim> pivot = points[end];
     int curr = start;
-    for (int j = start; j <= end-1; j++) {
-        if (smallerDimVal(points[j], pivot, currDim)) {
-            std::swap(points[curr], points[j]);
+    for (int i = start; i < end; i++) {
+        if (smallerDimVal(points[i], pivot, currDim)) {
+            swap(points[curr], points[i]);
             curr++;
         }
     }
