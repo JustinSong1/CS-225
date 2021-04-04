@@ -31,10 +31,10 @@ void AVLTree<K, V>::rotateLeft(Node*& t)
     functionCalls.push_back("rotateLeft"); // Stores the rotation name (don't remove this)
     Node* y = t->right;
     t->right = y->left;
-    t->height = 1 + std::max(heightOrNeg1(t->left), heightOrNeg1(t->right));
     y->left = t;
     t->height = 1 + std::max(heightOrNeg1(t->left), heightOrNeg1(t->right));
     t = y;
+    t->height = 1 + std::max(heightOrNeg1(t->left), heightOrNeg1(t->right));
 }
 
 template <class K, class V>
@@ -52,10 +52,10 @@ void AVLTree<K, V>::rotateRight(Node*& t)
     functionCalls.push_back("rotateRight"); // Stores the rotation name (don't remove this)
     Node* y = t->left;
     t->left = y->right;
-    t->height = 1 + std::max(heightOrNeg1(t->left), heightOrNeg1(t->right));
     y->right = t;
     t->height = 1 + std::max(heightOrNeg1(t->left), heightOrNeg1(t->right));
     t = y;
+    t->height = 1 + std::max(heightOrNeg1(t->left), heightOrNeg1(t->right));
 }
 
 template <class K, class V>
@@ -80,7 +80,7 @@ void AVLTree<K, V>::rebalance(Node*& subtree)
        }
    } else if (b > 1) {
        int br = heightOrNeg1(subtree->right->right) - heightOrNeg1(subtree->right->left);
-       if(br < 0) {
+       if(br > 0) {
            rotateLeft(subtree);
        } else {
            rotateRightLeft(subtree);
@@ -131,6 +131,7 @@ void AVLTree<K, V>::remove(Node*& subtree, const K& key)
         if (subtree->left == NULL && subtree->right == NULL) {
             delete subtree;
             subtree = nullptr;
+            return;
         } else if (subtree->left != NULL && subtree->right != NULL) {
            Node* iop = subtree->left;
            while(iop->right != nullptr) {
@@ -150,7 +151,7 @@ void AVLTree<K, V>::remove(Node*& subtree, const K& key)
            delete node;
            node = nullptr;
         }
-        subtree->height = 1 + std::max(heightOrNeg1(subtree->left), heightOrNeg1(subtree->right));
-        rebalance(subtree);
     }
+    subtree->height = 1 + std::max(heightOrNeg1(subtree->left), heightOrNeg1(subtree->right));
+    rebalance(subtree);
 }
