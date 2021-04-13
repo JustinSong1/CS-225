@@ -28,7 +28,7 @@ public:
   Animation animate(unsigned frameInterval) const;
 
 private:
-    PNG png_;
+    PNG* png_;
     std::vector<ImageTraversal*> traversals_;
     std::vector<ColorPicker*> colorPickers_;
 };

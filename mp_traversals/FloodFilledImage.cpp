@@ -17,7 +17,7 @@ using namespace cs225;
  * @param png The starting image of a FloodFilledImage
  */
 FloodFilledImage::FloodFilledImage(const PNG & png) {
-  png_ = png;
+  png_ = new PNG(png);
 }
 
 /**
@@ -53,19 +53,22 @@ void FloodFilledImage::addFloodFill(ImageTraversal & traversal, ColorPicker & co
  */ 
 Animation FloodFilledImage::animate(unsigned frameInterval) const {
   Animation animation;
-  animation.addFrame(png_);
-  PNG replace = png_;
   size_t count = 0;
   for(size_t i = 0; i < traversals_.size(); i++) {
      for(ImageTraversal::Iterator iter = traversals_[i]->begin(); iter != traversals_[i]->end(); ++iter) {
-        Point p = *iter;
-        HSLAPixel newColor = colorPickers_[i]->getColor(p.x, p.y);
-        replace.getPixel(p.x, p.y) = newColor;
-        if(count%frameInterval == 0) {
-            animation.addFrame(replace);
+       if(count%frameInterval == 0) {
+            animation.addFrame(*png_);
         }
         count++;
+        Point p = *iter;
+        HSLAPixel& orig = png_->getPixel(p.x, p.y);
+        HSLAPixel newColor = colorPickers_[i]->getColor(p.x, p.y);
+        orig.h = newColor.h;
+        orig.s = newColor.s;
+        orig.l = newColor.l;
+        orig.a = newColor.a;
      }
   }
+  animation.addFrame(*png_);
   return animation;
 }
