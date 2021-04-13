@@ -32,6 +32,10 @@ void FloodFilledImage::addFloodFill(ImageTraversal & traversal, ColorPicker & co
   colorPickers_.push_back(&colorPicker);
 }
 
+FloodFilledImage::~FloodFilledImage() {
+    delete png_;
+}
+
 /**
  * Creates an Animation of frames from the FloodFill operations added to this object.
  * 

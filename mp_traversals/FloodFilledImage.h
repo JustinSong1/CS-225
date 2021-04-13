@@ -24,6 +24,7 @@ using namespace cs225;
 class FloodFilledImage {
 public:
   FloodFilledImage(const PNG & png);
+  ~FloodFilledImage();
   void addFloodFill(ImageTraversal & traversal, ColorPicker & colorPicker);
   Animation animate(unsigned frameInterval) const;
 
