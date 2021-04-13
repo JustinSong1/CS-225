@@ -26,6 +26,7 @@ DFS::DFS(const PNG & png, const Point & start, double tolerance) {
     png_ = png;
     start_ = start;
     tolerance_ = tolerance;
+    add(start_);
 }
 
 /**

@@ -40,12 +40,19 @@ ImageTraversal::Iterator::Iterator(ImageTraversal *traversal, const PNG& png, Po
     start_ = start;
     curr_ = start;
     tolerance_ = tolerance;
-    visited_.resize(png.width(), std::vector<bool>(png.height(), false));
-    if (shouldVisit(curr_)) {
-        traversal->add(start);
-        visited_[start.x][start.y] = true;
+    png_ = png;
+    visited_.resize(png.width(), std::vector<bool>(png.height()));
+    for(size_t i = 0; i < visited_.size(); i++) {
+        for(size_t j = 0; j < visited_[i].size(); j++) {
+            visited_[i][j] = false;
+        }
     }
-    finished_ = false;
+    if (shouldVisit(curr_)) {
+        visited_[start.x][start.y] = true;
+        finished_ = false;
+    } else {
+        finished_ = true;
+    }
 }
 
 /**
@@ -54,36 +61,59 @@ ImageTraversal::Iterator::Iterator(ImageTraversal *traversal, const PNG& png, Po
  * Advances the traversal of the image.
  */
 ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
-    Point left = Point(curr_.x-1, curr_.y);
+    visited_[curr_.x][curr_.y] = true;
     Point right = Point(curr_.x+1, curr_.y);
-    Point up = Point(curr_.x, curr_.y-1);
     Point down = Point(curr_.x, curr_.y+1);
+    Point left = Point(curr_.x-1, curr_.y);
+    Point up = Point(curr_.x, curr_.y-1);
 
-    if(shouldVisit(left)) traversal_->add(left);
     if(shouldVisit(right)) traversal_->add(right);
-    if(shouldVisit(up)) traversal_->add(up);
     if(shouldVisit(down)) traversal_->add(down);
+    if(shouldVisit(left)) traversal_->add(left);
+    if(shouldVisit(up)) traversal_->add(up);
 
-    while(!traversal_->empty() && !visited_[traversal_->peek().x][traversal_->peek().y]) {
-        traversal_->pop();
-    }
     if(traversal_->empty()) {
+        finished_ = true;
         return *this;
     }
-    curr_ = traversal_->peek();
+    Point next = traversal_->pop();
+    while(visited_[next.x][next.y]) {
+        if(traversal_->empty()) {
+            finished_ = true;
+            return *this;
+        }
+        next = traversal_->pop();
+    }
+    // while(!traversal_->empty() && !shouldVisit(traversal_->peek())) {
+    //     traversal_->pop();
+    //     if(traversal_->empty()) {
+    //         return *this;
+    //     }
+    // }
+
+    // if(!traversal_->empty()) {
+    //     curr_ = traversal_->peek();
+    //     return *this;
+    // } else {
+    //     finished_ = true;
+    //     return *this;
+    // }
+    // return *this;
+    curr_ = next;
+    visited_[curr_.x][curr_.y] = true;
     return *this;
 }
 
 bool ImageTraversal::Iterator::shouldVisit(Point p) {
-    if(p.x < 0 || p.x >= png_.width()) {
+    if( p.x >= png_.width()) {
         return false;
     }
-    if(p.y < 0 || p.y >= png_.height()) {
+    if(p.y >= png_.height()) {
         return false;
     }
     HSLAPixel start = png_.getPixel(start_.x, start_.y);
     HSLAPixel curr = png_.getPixel(p.x, p.y);
-    if (calculateDelta(start, curr) <= tolerance_) {
+    if (calculateDelta(start, curr) <= tolerance_ && !visited_[p.x][p.y]) {
         return true;
     }
     return false;
@@ -104,6 +134,6 @@ Point ImageTraversal::Iterator::operator*() {
  * Determines if two iterators are not equal.
  */
 bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
-  return finished_ = other.finished_;
+  return finished_ != other.finished_;
 }
 
