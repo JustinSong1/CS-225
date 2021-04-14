@@ -17,7 +17,7 @@ using namespace cs225;
  * @param png The starting image of a FloodFilledImage
  */
 FloodFilledImage::FloodFilledImage(const PNG & png) {
-  png_ = new PNG(png);
+  png_ = png;
 }
 
 /**
@@ -30,10 +30,6 @@ FloodFilledImage::FloodFilledImage(const PNG & png) {
 void FloodFilledImage::addFloodFill(ImageTraversal & traversal, ColorPicker & colorPicker) {
   traversals_.push_back(&traversal);
   colorPickers_.push_back(&colorPicker);
-}
-
-FloodFilledImage::~FloodFilledImage() {
-    delete png_;
 }
 
 /**
@@ -57,22 +53,18 @@ FloodFilledImage::~FloodFilledImage() {
  */ 
 Animation FloodFilledImage::animate(unsigned frameInterval) const {
   Animation animation;
-  size_t count = 0;
+  PNG copy = png_;
   for(size_t i = 0; i < traversals_.size(); i++) {
-     for(ImageTraversal::Iterator iter = traversals_[i]->begin(); iter != traversals_[i]->end(); ++iter) {
-       if(count%frameInterval == 0) {
-            animation.addFrame(*png_);
+      size_t count = 0;
+      for(ImageTraversal::Iterator iter = traversals_[i]->begin(); iter != traversals_[i]->end(); ++iter) {
+        if(count%frameInterval == 0) {
+            animation.addFrame(copy);
         }
         count++;
         Point p = *iter;
-        HSLAPixel& orig = png_->getPixel(p.x, p.y);
-        HSLAPixel newColor = colorPickers_[i]->getColor(p.x, p.y);
-        orig.h = newColor.h;
-        orig.s = newColor.s;
-        orig.l = newColor.l;
-        orig.a = newColor.a;
+        copy.getPixel(p.x, p.y) = colorPickers_[i]->getColor(p.x, p.y);
      }
   }
-  animation.addFrame(*png_);
+  animation.addFrame(copy);
   return animation;
 }
