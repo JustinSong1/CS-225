@@ -16,16 +16,19 @@ using namespace cs225;
 
 int main() {
 
-  // @todo [Part 3]
-  // - The code below assumes you have an Animation called `animation`
-  // - The code provided below produces the `myFloodFill.png` file you must
-  //   submit Part 3 of this assignment -- uncomment it when you're ready.
-  
-  /*
+  PNG png;
+  png.readFromFile("tests/lantern.png");
+
+  FloodFilledImage image(png);
+  BFS bfs(png, Point(10, 10), 0.1);
+  MyColorPicker picker{};
+  image.addFloodFill(bfs, picker);
+  DFS dfs(png, Point(118,10), 0.1);
+  image.addFloodFill(dfs, picker);
+  Animation animation = image.animate(1000);
   PNG lastFrame = animation.getFrame( animation.frameCount() - 1 );
   lastFrame.writeToFile("myFloodFill.png");
   animation.write("myFloodFill.gif");
-  */
 
 
   return 0;
