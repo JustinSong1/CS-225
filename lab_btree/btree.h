@@ -22,7 +22,7 @@
 template <class K, class V>
 class BTree
 {
-  private:
+private:
     /**
      * A fancy key-value pair which acts as elements in the BTree.
      * Can be compared with <, >, ==. Additionally they can be compared against
@@ -164,7 +164,7 @@ class BTree
          * the elements and is_leaf information.
          */
         BTreeNode(const BTreeNode& other)
-            : is_leaf(other.is_leaf), elements(other.elements)
+                : is_leaf(other.is_leaf), elements(other.elements)
         {
         }
 
@@ -217,7 +217,7 @@ class BTree
     unsigned int order;
     BTreeNode* root;
 
-  public:
+public:
     /**
      * Constructs a default, order 64 BTree.
      */
@@ -277,7 +277,7 @@ class BTree
      */
     V find(const K& key) const;
 
-  private:
+private:
     /**
      * Private recursive version of the insert function.
      * @param subroot A reference of a pointer to the current BTreeNode.

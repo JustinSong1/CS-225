@@ -72,36 +72,42 @@ template <class K, class V>
 void LPHashTable<K, V>::insert(K const& key, V const& value)
 {
 
-    /**
-     * @todo Implement this function.
-     *
-     * @note Remember to resize the table when necessary (load factor >= 0.7).
-     * **Do this check *after* increasing elems (but before inserting)!!**
-     * Also, don't forget to mark the cell for probing with should_probe!
-     */
-
-    (void) key;   // prevent warnings... When you implement this function, remove this line.
-    (void) value; // prevent warnings... When you implement this function, remove this line.
+    elems++;
+    if(shouldResize()) {
+        resizeTable();
+    }
+    int i = hashes::hash(key, size);
+    while(table[i] != nullptr) {
+        i = (i+1)%size;
+    }
+    should_probe[i] = true;
+    table[i] = new std::pair<K, V>(key, value);
 }
 
 template <class K, class V>
 void LPHashTable<K, V>::remove(K const& key)
 {
-    /**
-     * @todo: implement this function
-     */
+    int i = findIndex(key);
+    if(i != -1) {
+        elems--;
+        delete table[i];
+        table[i] = nullptr;
+    }
 }
 
 template <class K, class V>
 int LPHashTable<K, V>::findIndex(const K& key) const
 {
-    
-    /**
-     * @todo Implement this function
-     *
-     * Be careful in determining when the key is not in the table!
-     */
-
+    size_t i = hashes::hash(key, size);
+    while(should_probe[i]) {
+        if(table[i] != nullptr && table[i]->first == key) {
+            return i;
+        }
+        i = (i+1)%size;
+        if(i == hashes::hash(key, size)) {
+            return -1;
+        }
+    }
     return -1;
 }
 
@@ -151,12 +157,26 @@ void LPHashTable<K, V>::clear()
 template <class K, class V>
 void LPHashTable<K, V>::resizeTable()
 {
+    size_t newSize = findPrime(size*2);
+    auto** newTable = new std::pair<K,V>*[newSize];
+    delete[] should_probe;
+    should_probe = new bool[newSize];
+    for(size_t i = 0; i < newSize; i++) {
+        should_probe[i] = false;
+        newTable[i] = nullptr;
+    }
 
-    /**
-     * @todo Implement this function
-     *
-     * The size of the table should be the closest prime to size * 2.
-     *
-     * @hint Use findPrime()!
-     */
+    for(size_t i = 0; i < size; i++) {
+        if(table[i] != nullptr) {
+            int index = hashes::hash( table[i]->first, newSize );
+            while( newTable[index] != nullptr) {
+                index = (index+1)%size;
+            }
+            should_probe[index] = true;
+            newTable[index] = table[i];
+        }
+    }
+    delete[] table;
+    table = newTable;
+    size = newSize;
 }

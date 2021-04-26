@@ -49,34 +49,37 @@ SCHashTable<K, V>::SCHashTable(SCHashTable<K, V> const& other)
 template <class K, class V>
 void SCHashTable<K, V>::insert(K const& key, V const& value)
 {
-
-    /**
-     * @todo Implement this function.
-     *
-     */
+    elems++;
+    if(shouldResize()) {
+        resizeTable();
+    }
+    table[hashes::hash(key, size)].push_front(std::pair<K,V>(key, value));
 }
 
 template <class K, class V>
 void SCHashTable<K, V>::remove(K const& key)
 {
     typename std::list<std::pair<K, V>>::iterator it;
-    /**
-     * @todo Implement this function.
-     *
-     * Please read the note in the lab spec about list iterators and the
-     * erase() function on std::list!
-     */
-    (void) key; // prevent warnings... When you implement this function, remove this line.
+    int i = hashes::hash(key, size);
+    for(it = table[i].begin(); it != table[i].end(); it++) {
+        if(it->first == key) {
+            table[i].erase(it);
+            return;
+        }
+    }
 }
 
 template <class K, class V>
 V SCHashTable<K, V>::find(K const& key) const
 {
 
-    /**
-     * @todo: Implement this function.
-     */
-
+    int i = hashes::hash(key, size);
+    typename std::list<std::pair<K, V>>::iterator it;
+    for(it = table[i].begin(); it != table[i].end(); it++) {
+        if(it->first == key) {
+            return it->second;
+        }
+    }
     return V();
 }
 
@@ -126,12 +129,14 @@ template <class K, class V>
 void SCHashTable<K, V>::resizeTable()
 {
     typename std::list<std::pair<K, V>>::iterator it;
-    /**
-     * @todo Implement this function.
-     *
-     * Please read the note in the spec about list iterators!
-     * The size of the table should be the closest prime to size * 2.
-     *
-     * @hint Use findPrime()!
-     */
+    int newSize = findPrime(size*2);
+    auto* newTable = new std::list<std::pair<K, V>>[newSize];
+    for(size_t i = 0; i < size; i++) {
+        for(it = table[i].begin(); it!= table[i].end(); it++) {
+            newTable[hashes::hash(it->first, newSize)].push_back(std::pair<K,V>(it->first, it->second));
+        }
+    }
+    delete[] table;
+    size = newSize;
+    table = newTable;
 }
