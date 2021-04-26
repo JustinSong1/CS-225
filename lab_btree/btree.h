@@ -341,6 +341,9 @@ private:
 template <class T, class C>
 size_t binary_search(const std::vector<T>& elements, const C& val, size_t left, size_t right) {
     size_t middle = (left+right)/2;
+    if(val > elements[middle] && val < elements[middle+1]) {
+        return middle+1;
+    }
     if(val == elements[middle]) {
         return middle;
     } else if(val > elements[middle]) {

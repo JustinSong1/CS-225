@@ -151,16 +151,14 @@ void BTree<K, V>::split_child(BTreeNode* parent, size_t child_idx)
     /* Iterator for the middle child. */
     auto mid_child_itr = child->children.begin() + mid_child_idx;
 
-    // insert a pointer into parent's children
     parent->children.insert(child_itr, new_right);
-    // insert the median element into the parent
     parent->elements.insert(elem_itr, child->elements[mid_elem_idx]);
-    // copy elements/children to the right of the median
-    new_right->elements.assign(mid_elem_itr + 1, child->elements.end());
+    
+    new_right->elements.assign(mid_elem_itr+1, child->elements.end());
     new_right->children.assign(mid_child_itr, child->children.end());
-    // copy elements/children to the left of the median
-    new_left->elements.assign(child->elements.begin(), mid_elem_itr);
-    new_left->children.assign(child->children.begin(), mid_child_itr);
+    
+    new_left->elements.assign(new_left->elements.begin(),mid_elem_itr);
+    new_left->children.assign(new_left->children.begin(), mid_child_itr);
 }
 
 /**
