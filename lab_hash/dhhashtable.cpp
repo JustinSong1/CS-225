@@ -87,7 +87,12 @@ void DHHashTable<K, V>::insert(K const& key, V const& value)
        index = (h1+i*h2)%size;
    }
    should_probe[index] = true;
-   table[index] = new std::pair<K, V>(key, value);
+   if(table[index] == nullptr) {
+       table[index] = new std::pair<K, V>(key, value);
+   } else {
+      table[index]->first = key;
+      table[index]->second = value;
+   }
 }
 
 template <class K, class V>
@@ -95,9 +100,7 @@ void DHHashTable<K, V>::remove(K const& key)
 {
     int i = findIndex(key);
     if(i != -1) {
-        elems--;
-        delete table[i];
-        table[i] = nullptr;
+        should_probe[i] = false;
     }
 }
 
@@ -108,8 +111,15 @@ int DHHashTable<K, V>::findIndex(const K& key) const
     size_t h2 = hashes::secondary_hash(key, size);
     size_t i = 0;
     size_t index = h1;
+
+    if(should_probe[index] && table[index]->first == key) {
+            return index;
+        }
+    i++;
+    index = (h1+i*h2)%size;
+
     while(index != h1) {
-        if(table[index] != nullptr && table[index]->first == key && should_probe[index]) {
+        if(should_probe[index] && table[index]->first == key) {
             return index;
         }
         i++;
