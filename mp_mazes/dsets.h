@@ -1,3 +1,6 @@
+#ifndef DSET_H
+#define DSET_H
+
 #include <vector>
 class DisjointSets {
 public:
@@ -10,3 +13,5 @@ public:
 private:
     std::vector<int> data;
 };
+
+#endif /* DSET_H */
