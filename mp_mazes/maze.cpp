@@ -21,12 +21,12 @@ bool SquareMaze::canTravel(int x, int y, int dir) const {
             if(x <= 0) {
                 return false;
             }
-            return !right[getIndex(x, y)];
+            return !right[getIndex(x-1, y)];
         case 3:
             if(y <= 0) {
                 return false;
             }
-            return !down[getIndex(x, y)];
+            return !down[getIndex(x, y-1)];
         default:
             return false;
     }
@@ -35,7 +35,7 @@ bool SquareMaze::canTravel(int x, int y, int dir) const {
 cs225::PNG *SquareMaze::drawMaze() const {
     cs225::PNG* maze = new cs225::PNG(width_*10+1, height_*10+1);
     cs225::HSLAPixel black(0, 0, 0);
-    for(int i = 0; i < width_*10+1; i++) {
+    for(int i = 10; i < width_*10+1; i++) {
         maze->getPixel(i,0) = black;
     }
     for(int i = 0; i < height_*10+1; i++) {
@@ -65,20 +65,19 @@ void SquareMaze::makeMaze(int width, int height) {
     down = std::vector<bool>(width*height, true);
     right = std::vector<bool>(width*height, true);
     int deleted = 0;
-    srand(time(NULL));
     while(deleted != (width*height)-1) {
         int wallX = rand() % width;
         int wallY = rand() % height;
         int side = rand() % 2;
         if(side == 0 && wallX != width-1) {
-            if(set.find(getIndex(wallX, wallY)) != set.find(getIndex(wallX+1, wallY))) {
+            if(set.find(getIndex(wallX, wallY)) != set.find(getIndex(wallX+1, wallY)) && right[getIndex(wallX, wallY)]) {
                 setWall(wallX, wallY, 0, false);
                 set.setunion(getIndex(wallX, wallY), getIndex(wallX+1, wallY));
                 deleted++;
             }
         }
         if(side == 1 && wallY != height-1) {
-            if(set.find(getIndex(wallX, wallY)) != set.find(getIndex(wallX, wallY+1))) {
+            if(set.find(getIndex(wallX, wallY)) != set.find(getIndex(wallX, wallY+1))  && right[getIndex(wallX, wallY)]) {
                 setWall(wallX, wallY, 1, false);
                 set.setunion(getIndex(wallX, wallY), getIndex(wallX, wallY+1));
                 deleted++;
@@ -101,6 +100,7 @@ std::vector<int> SquareMaze::solveMaze() {
     std::stack<int> s;
     std::map<int, int> map;
     visited[0] = true;
+    s.push(0);
     while(!s.empty()) {
         int curr = s.top();
         int currX = curr%width_;
@@ -131,6 +131,7 @@ std::vector<int> SquareMaze::solveMaze() {
     std::vector<int> temp;
     int longest = 0;
     for(int i = 0; i < width_; i++) {
+        temp.clear();
         int length = 0;
         int next = getIndex(i,height_-1);
         while(next != 0) {
@@ -157,35 +158,35 @@ std::vector<int> SquareMaze::solveMaze() {
 
 cs225::PNG *SquareMaze::drawMazeWithSolution() {
     cs225::PNG* maze = drawMaze();
-    cs225::HSLAPixel red(0.1, 0.5, 1);
+    cs225::HSLAPixel red(0, 1, 0.5, 1);
     std::vector<int> path = solveMaze();
     int x = 5;
     int y = 5;
     for(size_t i = 0; i < path.size(); i++) {
         if(path[i] == 0) {
             for(int j = 0; j <= 10; j++) {
-                maze->getPixel(x+j, y);
+                maze->getPixel(x+j, y) = red;
             }
             x += 10;
         } else if(path[i] == 1) {
             for(int j = 0; j <= 10; j++) {
-                maze->getPixel(x, y+j);
+                maze->getPixel(x, y+j) = red;
             }
             y += 10;
         } else if(path[i] == 2) {
             for(int j = 0; j <= 10; j++) {
-                maze->getPixel(x-j, y);
+                maze->getPixel(x-j, y) = red;
             }
             x -= 10;
         } else if(path[i] == 3) {
             for(int j = 0; j <= 10; j++) {
-                maze->getPixel(x, y-j);
+                maze->getPixel(x, y-j) = red;
             }
             y -= 10;
         }
     }
     x -= 5;
-    y -= 5;
+    y += 5;
     for(int i = 0; i <= 10; i++) {
         maze->getPixel(x+i, y) = cs225::HSLAPixel(0, 1, 1);
     }
