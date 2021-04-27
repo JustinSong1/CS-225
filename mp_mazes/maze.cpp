@@ -158,7 +158,7 @@ std::vector<int> SquareMaze::solveMaze() {
 
 cs225::PNG *SquareMaze::drawMazeWithSolution() {
     cs225::PNG* maze = drawMaze();
-    cs225::HSLAPixel red(0, 1, 0.5, 1);
+    cs225::HSLAPixel red(0, 1, 0.5);
     std::vector<int> path = solveMaze();
     int x = 5;
     int y = 5;
@@ -174,7 +174,7 @@ cs225::PNG *SquareMaze::drawMazeWithSolution() {
             }
             y += 10;
         } else if(path[i] == 2) {
-            for(int j = 0; j <= 10; j++) {
+            for(int  j = 0; j <= 10; j++) {
                 maze->getPixel(x-j, y) = red;
             }
             x -= 10;
@@ -188,7 +188,7 @@ cs225::PNG *SquareMaze::drawMazeWithSolution() {
     x -= 5;
     y += 5;
     for(int i = 0; i <= 10; i++) {
-        maze->getPixel(x+i, y) = cs225::HSLAPixel(0, 1, 1);
+        maze->getPixel(x+i, y).l = 1.0;
     }
     return maze;
 }
