@@ -70,14 +70,22 @@ void CommonWords::init_common()
 vector<string> CommonWords::get_common_words(unsigned int n) const
 {
     vector<string> out;
-    for(auto pair : common) {
+    size_t size = file_word_maps.size();
+    for(auto& pair : common) {
         if(pair.second == file_word_maps.size()) {
             bool should_add = true;
-            for(auto file_counts : file_word_maps) {
-                if(file_counts[pair.first] < n) {
+            // for(auto file_counts : file_word_maps) {
+            //     if(file_counts[pair.first] < n) {
+            //         should_add = false;
+            //         break;
+            //     }
+            // }
+            size_t i = 0;
+            while (i < size && should_add) {
+                if(file_word_maps[i].at(pair.first) < n) {
                     should_add = false;
-                    break;
                 }
+                i++;
             }
             if(should_add) out.push_back(pair.first);
         }
